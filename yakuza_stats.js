@@ -69,6 +69,9 @@ const runApp = async () => {
   console.log("Barracuda table: " + barracuda_burn_amount)
   console.log("Minnow table: " + minnow_burn_amount)
   console.log("Total burnt: " + (whale_burn_amount + barracuda_burn_amount + minnow_burn_amount));
+
+  console.log("\nSocials\n")
+  await getTelegramMembers("@yakuza2033")
 }
 runApp();
 
@@ -191,4 +194,23 @@ async function getTotalAmountSentToAddress(fromAddress, toAddress) {
     cursor = transfers.pagination.cursor;
   } while (cursor != '' && cursor != null);
   return Number.parseInt(total_amount / dividoooor)
+}
+
+async function getTelegramMembers(chat_name) {
+  fetch("https://api.telegram.org/bot" + getApiKey('telegram_api_key') + "/getChatMemberCount?chat_id=" + chat_name)
+  .then(function (response) {
+    return response.json();
+  }).then(function (data) {
+    console.log("Telegram members: " + data.result)
+  }).catch(function (err) {
+    console.log('Fetch Error (Telegram):-S', err);
+  });
+}
+
+function getApiKey(filename) {
+  try {
+    return fs.readFileSync(filename, 'utf8').toString()
+  } catch (err) {
+    console.error(err);
+  }
 }
