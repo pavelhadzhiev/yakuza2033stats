@@ -5,6 +5,7 @@ const fs = require('fs');
 const chain = EvmChain.ARBITRUM;
 const dividoooor = 1000000000000000000;
 const moralisApiKeyFilename = 'moralis_api_key';
+const telegramApiKeyFilename = 'telegram_api_key';
 
 const runApp = async () => {
   await startMoralis(moralisApiKeyFilename)
@@ -35,6 +36,9 @@ const runApp = async () => {
   const barracuda_table_address = "0x775B28CD226D14D8dC6951052Ec3a243A0f6284E";
   const minnow_table_address = "0x2DE078b86d0931C07b3E7f40E4128523e1C9A8dc";
   const burn_address_dice = "0x0000000000000000000000000000000000000000";
+
+  // Socials
+  const telegram_chat_id = "@yakuza2033"
 
   const bugs_total_supply = await getTotalSupplyOfERC20(bugs_contract);
   const bugs_burnt_by_operatives = await getERC20BalanceOfAddress(bugs_contract, burn_address_operatives);
@@ -71,18 +75,14 @@ const runApp = async () => {
   console.log("Total burnt: " + (whale_burn_amount + barracuda_burn_amount + minnow_burn_amount));
 
   console.log("\nSocials\n")
-  await getTelegramMembers("@yakuza2033")
+  await getTelegramMembers(telegram_chat_id)
 }
 runApp();
 
 async function startMoralis(apiKeyFilename) {
-  try {
-    await Moralis.start({
-      apiKey: fs.readFileSync('moralis_api_key', 'utf8').toString(),
-    });
-  } catch (err) {
-    console.error(err);
-  }
+  await Moralis.start({
+    apiKey: getApiKey(apiKeyFilename)
+  });
 }
 
 async function getTotalSupplyOfERC20(address) {
@@ -197,14 +197,14 @@ async function getTotalAmountSentToAddress(fromAddress, toAddress) {
 }
 
 async function getTelegramMembers(chat_name) {
-  fetch("https://api.telegram.org/bot" + getApiKey('telegram_api_key') + "/getChatMemberCount?chat_id=" + chat_name)
-  .then(function (response) {
-    return response.json();
-  }).then(function (data) {
-    console.log("Telegram members: " + data.result)
-  }).catch(function (err) {
-    console.log('Fetch Error (Telegram):-S', err);
-  });
+  fetch("https://api.telegram.org/bot" + getApiKey(telegramApiKeyFilename) + "/getChatMemberCount?chat_id=" + chat_name)
+    .then(function (response) {
+      return response.json();
+    }).then(function (data) {
+      console.log("Telegram members: " + data.result)
+    }).catch(function (err) {
+      console.log('Fetch Error (Telegram):-S', err);
+    });
 }
 
 function getApiKey(filename) {
