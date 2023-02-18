@@ -43,22 +43,22 @@ const runApp = async () => {
 
   // Count all operatives
   const operatives = await getNFTsInContract(operatives_contract)
-  console.log("Henchmen: " + parseSupplyOfNFT(operatives, henchmen_token_id));
-  console.log("Prostitutes: " + parseSupplyOfNFT(operatives, prostitutes_token_id));
-  console.log("Officials: " + parseSupplyOfNFT(operatives, officials_token_id));
+  console.log("Henchmen: " + getSupplyOfNFTsWithTokenID(operatives, henchmen_token_id));
+  console.log("Prostitutes: " + getSupplyOfNFTsWithTokenID(operatives, prostitutes_token_id));
+  console.log("Officials: " + getSupplyOfNFTsWithTokenID(operatives, officials_token_id));
 
   // Count shards and tickets
   const shards_and_tickets = await getNFTsInContract(shards_and_tickets_contract)
-  console.log("Tickets: " + parseSupplyOfNFT(shards_and_tickets, tickets_token_id));
-  console.log("Shards: " + parseSupplyOfNFT(shards_and_tickets, shards_token_id));
+  console.log("Tickets: " + getSupplyOfNFTsWithTokenID(shards_and_tickets, tickets_token_id));
+  console.log("Shards: " + getSupplyOfNFTsWithTokenID(shards_and_tickets, shards_token_id));
 
   // Count all geishas
   const geishas = await getNFTsInContract(geishas_contract)
-  console.log("Geishas: " + parseSupplyOfAllNFTs(geishas));
+  console.log("Geishas: " + getSupplyOfNFTs(geishas));
 
   // Count ticket holders
   console.log("\nHolder Data\n")
-  console.log("Ticket holders: " + await getNFTHoldersCount(shards_and_tickets_contract, tickets_token_id));
+  console.log("Ticket holders: " + await getNFTHoldersCountForWithTokenID(shards_and_tickets_contract, tickets_token_id));
 
   const whale_burn_amount = await getTotalAmountSentToAddress(whale_table_address, burn_address_dice);
   const barracuda_burn_amount = await getTotalAmountSentToAddress(barracuda_table_address, burn_address_dice);
@@ -136,41 +136,36 @@ async function getNFTsInContract(address) {
   });
 }
 
-function parseSupplyOfNFT(contractNFTs, tokenId) {
-  let i = 0;
-  while (i < contractNFTs.result.length) {
-    if (contractNFTs.result[i].tokenId == tokenId) {
-      return Number.parseInt(contractNFTs.result[i].amount);
-    }
-    i++;
-  }
-  return 0;
-}
-
-function parseSupplyOfAllNFTs(contractNFTs) {
-  let i = 0;
+function getSupplyOfNFTs(contractNFTs) {
   let all_nfts_in_contract = 0;
-  while (i < contractNFTs.result.length) {
-    all_nfts_in_contract += Number.parseInt(contractNFTs.result[i].amount)
-    i++
+  for (const nft of contractNFTs.result) {
+    all_nfts_in_contract += Number.parseInt(nft.amount)
   }
   return all_nfts_in_contract;
 }
 
-async function getNFTHoldersCount(address, tokenId) {
-  const response = await Moralis.EvmApi.nft.getNFTOwners({
+function getSupplyOfNFTsWithTokenID(contractNFTs, tokenId) {
+  for (const nft of contractNFTs.result) {
+    if (nft.tokenId == tokenId) {
+      return Number.parseInt(nft.amount);
+    }
+  }
+  return 0;
+}
+
+async function getNFTHoldersCountForWithTokenID(address, tokenId) {
+  const contract_holders = await Moralis.EvmApi.nft.getNFTOwners({
     address,
     chain,
   });
 
-  let i = 0;
   let nft_holders = 0;
-  while (i < response.result.length) {
-    if (response.result[i].tokenId == tokenId) {
+  for (const holder of contract_holders.result) {
+    if (holder.tokenId == tokenId) {
       nft_holders++;
     }
-    i++;
   }
+
   return nft_holders
 }
 
