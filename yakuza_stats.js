@@ -175,23 +175,25 @@ async function getNFTHoldersCount(address, tokenId) {
 }
 
 async function getTotalAmountSentToAddress(fromAddress, toAddress) {
-  const all_transfers = await getWalletTransfers(fromAddress);
-
-  let i = 0;
+  const limit = 100;
+  let cursor = null;
   let total_amount = 0;
-  while (i < all_transfers.result.length) {
-    if (all_transfers.result[i].toAddress.lowercase == toAddress) {
-      total_amount += Number.parseInt(all_transfers.result[i].value);
+
+  do {
+    const transfers = await Moralis.EvmApi.token.getWalletTokenTransfers({
+      address: fromAddress,
+      chain,
+      limit,
+      cursor,
+    });
+
+    for (const transfer of transfers.result) {
+      if (transfer.toAddress.lowercase == toAddress) {
+        total_amount += Number.parseInt(transfer.value);
+      }
     }
-    i++;
-  }
 
-  return Number.parseInt(total_amount / dividoooor);
-}
-
-async function getWalletTransfers(address) {
-  return await Moralis.EvmApi.token.getWalletTokenTransfers({
-    address,
-    chain,
-  })
+    cursor = transfers.pagination.cursor;
+  } while (cursor != '' && cursor != null);
+  return Number.parseInt(total_amount / dividoooor)
 }
