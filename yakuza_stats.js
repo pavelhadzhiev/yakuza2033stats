@@ -31,8 +31,8 @@ const runApp = async () => {
   // Geishas contract address
   const geishas_contract = "0x6d432148a7b2396f260c702d1F4a018A8F85c456";
 
-   // Weapons contract address
-   const weapons_contract = "0x55B749f69285B8950893EfC046Ff60f1E3B42511";
+  // Weapons contract address
+  const weapons_contract = "0x55B749f69285B8950893EfC046Ff60f1E3B42511";
 
   // Dice table contract addresses
   const whale_table_address = "0x549Db17d7720B11E8A5Dd6AFfE013A8399c22f16";
@@ -71,15 +71,21 @@ const runApp = async () => {
   console.log("\nHolder Data\n")
   console.log("Ticket holders: " + await getNFTHoldersCountForWithTokenID(shards_and_tickets_contract, tickets_token_id));
 
+  console.log("\nBUGS Burnt from minting\n");
+
+  const weapons_burn_amount = await getBurnAmountOfWeapons(weapons);
   const whale_burn_amount = await getTotalAmountSentToAddress(whale_table_address, burn_address_dice);
   const barracuda_burn_amount = await getTotalAmountSentToAddress(barracuda_table_address, burn_address_dice);
   const minnow_burn_amount = await getTotalAmountSentToAddress(minnow_table_address, burn_address_dice);
 
-  console.log("\nBUGS Burnt from Dice\n");
-  console.log("Whale table: " + whale_burn_amount)
-  console.log("Barracuda table: " + barracuda_burn_amount)
-  console.log("Minnow table: " + minnow_burn_amount)
-  console.log("Total burnt: " + (whale_burn_amount + barracuda_burn_amount + minnow_burn_amount));
+  console.log("Weapons: " +  weapons_burn_amount);
+  console.log("Dice: " + (whale_burn_amount + barracuda_burn_amount + minnow_burn_amount));
+  console.log("  Whale table: " + whale_burn_amount)
+  console.log("  Barracuda table: " + barracuda_burn_amount)
+  console.log("  Minnow table: " + minnow_burn_amount)
+
+
+
 
   console.log("\nSocials\n")
   await getTelegramMembers(telegram_chat_id)
@@ -152,6 +158,54 @@ function getSupplyOfNFTs(contractNFTs) {
     all_nfts_in_contract += Number.parseInt(nft.amount)
   }
   return all_nfts_in_contract;
+}
+
+function getBurnAmountOfWeapons(contract) {
+  let total_burnt = 0;
+  for (const nft of contract.result) {
+    switch (nft.tokenId) {
+      case '0':
+        total_burnt += nft.amount * 100;
+        break;
+      case '1':
+        total_burnt += nft.amount * 224;
+        break;
+      case '2':
+        total_burnt += nft.amount * 500;
+        break;
+      case '3':
+        total_burnt += nft.amount * 750;
+        break;
+      case '4':
+        total_burnt += nft.amount * 1000;
+        break;
+      case '5':
+        total_burnt += nft.amount * 1500;
+        break;
+      case '6':
+        total_burnt += nft.amount * 2250;
+        break;
+      case '7':
+        total_burnt += nft.amount * 2500;
+        break;
+      case '8':
+        total_burnt += nft.amount * 4000;
+        break;
+      case '9':
+        total_burnt += nft.amount * 6000;
+        break;
+      case '10':
+        total_burnt += nft.amount * 10000;
+        break;
+      case '11':
+        total_burnt += nft.amount * 15000;
+        break;
+      default:
+        console.log(`ERROR: Unidenified weapon with ID ${expr}.`);
+    }
+
+  }
+  return total_burnt;
 }
 
 function getSupplyOfNFTsWithTokenID(contractNFTs, tokenId) {
