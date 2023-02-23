@@ -31,6 +31,9 @@ const runApp = async () => {
   // Geishas contract address
   const geishas_contract = "0x6d432148a7b2396f260c702d1F4a018A8F85c456";
 
+   // Weapons contract address
+   const weapons_contract = "0x55B749f69285B8950893EfC046Ff60f1E3B42511";
+
   // Dice table contract addresses
   const whale_table_address = "0x549Db17d7720B11E8A5Dd6AFfE013A8399c22f16";
   const barracuda_table_address = "0x775B28CD226D14D8dC6951052Ec3a243A0f6284E";
@@ -59,6 +62,10 @@ const runApp = async () => {
   // Count all geishas
   const geishas = await getNFTsInContract(geishas_contract)
   console.log("Geishas: " + getSupplyOfNFTs(geishas));
+
+  // Count all weapons
+  const weapons = await getNFTsInContract(weapons_contract)
+  console.log("Weapons: " + getSupplyOfNFTs(weapons));
 
   // Count ticket holders
   console.log("\nHolder Data\n")
