@@ -43,43 +43,49 @@ const runApp = async () => {
   // Socials
   const telegram_chat_id = "@yakuza2033"
 
-  const bugs_total_supply = await getTotalSupplyOfERC20(bugs_contract);
-  const bugs_burnt_by_operatives = await getERC20BalanceOfAddress(bugs_contract, burn_address_operatives);
+  const bugs_total_supply = await getTotalSupplyOfERC20(bugs_contract)
+  const bugs_burnt_by_operatives = await getERC20BalanceOfAddress(bugs_contract, burn_address_operatives)
   console.log("\nToken & NFT Supply Data\n")
   console.log("BUGS: " + (bugs_total_supply - bugs_burnt_by_operatives))
 
   // Count all operatives
   const operatives = await getNFTsInContract(operatives_contract)
-  console.log("Henchmen: " + getSupplyOfNFTsWithTokenID(operatives, henchmen_token_id));
-  console.log("Prostitutes: " + getSupplyOfNFTsWithTokenID(operatives, prostitutes_token_id));
-  console.log("Officials: " + getSupplyOfNFTsWithTokenID(operatives, officials_token_id));
+  const henchmen_supply = getSupplyOfNFTsWithTokenID(operatives, henchmen_token_id)
+  const prostitutes_supply = getSupplyOfNFTsWithTokenID(operatives, prostitutes_token_id)
+  const officials_supply = getSupplyOfNFTsWithTokenID(operatives, officials_token_id)
+  console.log("Operatives: " + (henchmen_supply + prostitutes_supply + officials_supply))
+  console.log("  Henchmen: " + henchmen_supply)
+  console.log("  Prostitutes: " + prostitutes_supply)
+  console.log("  Officials: " + officials_supply)
 
   // Count shards and tickets
   const shards_and_tickets = await getNFTsInContract(shards_and_tickets_contract)
-  console.log("Tickets: " + getSupplyOfNFTsWithTokenID(shards_and_tickets, tickets_token_id));
-  console.log("Shards: " + getSupplyOfNFTsWithTokenID(shards_and_tickets, shards_token_id));
+  console.log("Tickets: " + getSupplyOfNFTsWithTokenID(shards_and_tickets, tickets_token_id))
+  console.log("Shards: " + getSupplyOfNFTsWithTokenID(shards_and_tickets, shards_token_id))
 
   // Count all geishas
   const geishas = await getNFTsInContract(geishas_contract)
-  console.log("Geishas: " + getSupplyOfNFTs(geishas));
+  console.log("Geishas: " + getSupplyOfNFTs(geishas))
 
   // Count all weapons
   const weapons = await getNFTsInContract(weapons_contract)
-  console.log("Weapons: " + getSupplyOfNFTs(weapons));
+  console.log("Weapons: " + getSupplyOfNFTs(weapons))
 
   // Count ticket holders
   console.log("\nHolder Data\n")
-  console.log("Ticket holders: " + await getNFTHoldersCountForWithTokenID(shards_and_tickets_contract, tickets_token_id));
+  console.log("Ticket holders: " + await getNFTHoldersCountForWithTokenID(shards_and_tickets_contract, tickets_token_id))
 
-  console.log("\nBUGS Burnt from minting\n");
+  console.log("\nBUGS Burnt from minting & gambling\n")
 
+  const operatives_burn_amount = henchmen_supply * 1000 + prostitutes_supply * 1500 + officials_supply * 1250
   const weapons_burn_amount = await getBurnAmountOfWeapons(weapons);
-  const whale_burn_amount = await getTotalAmountSentToAddress(whale_table_address, burn_address_dice);
-  const barracuda_burn_amount = await getTotalAmountSentToAddress(barracuda_table_address, burn_address_dice);
-  const minnow_burn_amount = await getTotalAmountSentToAddress(minnow_table_address, burn_address_dice);
+  const whale_burn_amount = await getTotalAmountSentToAddress(whale_table_address, burn_address_dice)
+  const barracuda_burn_amount = await getTotalAmountSentToAddress(barracuda_table_address, burn_address_dice)
+  const minnow_burn_amount = await getTotalAmountSentToAddress(minnow_table_address, burn_address_dice)
 
-  console.log("Weapons: " +  weapons_burn_amount);
-  console.log("Dice: " + (whale_burn_amount + barracuda_burn_amount + minnow_burn_amount));
+  console.log("Operatives: " +  operatives_burn_amount)
+  console.log("Weapons: " +  weapons_burn_amount)
+  console.log("Dice: " + (whale_burn_amount + barracuda_burn_amount + minnow_burn_amount))
   console.log("  Whale table: " + whale_burn_amount)
   console.log("  Barracuda table: " + barracuda_burn_amount)
   console.log("  Minnow table: " + minnow_burn_amount)
@@ -168,7 +174,7 @@ function getBurnAmountOfWeapons(contract) {
         total_burnt += nft.amount * 100;
         break;
       case '1':
-        total_burnt += nft.amount * 224;
+        total_burnt += nft.amount * 225;
         break;
       case '2':
         total_burnt += nft.amount * 500;
