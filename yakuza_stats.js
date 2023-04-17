@@ -22,6 +22,9 @@ const runApp = async () => {
   const henchmen_token_id = "0";
   const prostitutes_token_id = "1";
   const officials_token_id = "2";
+  const drivers_token_id = "3";
+  const strippers_token_id = "4";
+  const lawyers_token_id = "5";
 
   // Shards and tickets contract address & token iDs
   const shards_and_tickets_contract = "0xAb21F4b5CD58b2bE6Da5025eD48064dA8B9685AF";
@@ -53,10 +56,19 @@ const runApp = async () => {
   const henchmen_supply = getSupplyOfNFTsWithTokenID(operatives, henchmen_token_id)
   const prostitutes_supply = getSupplyOfNFTsWithTokenID(operatives, prostitutes_token_id)
   const officials_supply = getSupplyOfNFTsWithTokenID(operatives, officials_token_id)
-  console.log("Operatives: " + (henchmen_supply + prostitutes_supply + officials_supply))
+  const drivers_supply = getSupplyOfNFTsWithTokenID(operatives, drivers_token_id)
+  const strippers_supply = getSupplyOfNFTsWithTokenID(operatives, strippers_token_id)
+  const lawyers_supply = getSupplyOfNFTsWithTokenID(operatives, lawyers_token_id)
+  const big_ops_supply = henchmen_supply + prostitutes_supply + officials_supply
+  const mini_ops_supply = drivers_supply + strippers_supply + lawyers_supply
+  console.log("Operatives: " + big_ops_supply + " (big) + " + mini_ops_supply + " (mini)")
   console.log("  Henchmen: " + henchmen_supply)
   console.log("  Prostitutes: " + prostitutes_supply)
   console.log("  Officials: " + officials_supply)
+  console.log("  Drivers: " + drivers_supply)
+  console.log("  Strippers: " + strippers_supply)
+  console.log("  Lawyers: " + lawyers_supply)
+  console.log("  BUGS minted daily: " + (henchmen_supply * 4 + prostitutes_supply * 12 + officials_supply * 8 + drivers_supply * 0.04 + strippers_supply * 0.12 + lawyers_supply * 0.08))
 
   // Count shards and tickets
   const shards_and_tickets = await getNFTsInContract(shards_and_tickets_contract)
@@ -77,7 +89,7 @@ const runApp = async () => {
 
   console.log("\nBUGS Burnt from minting & gambling\n")
 
-  const operatives_burn_amount = henchmen_supply * 1000 + prostitutes_supply * 1500 + officials_supply * 1250
+  const operatives_burn_amount = henchmen_supply * 1000 + prostitutes_supply * 1500 + officials_supply * 1250 + drivers_supply * 10 + strippers_supply * 15 + lawyers_supply * 12.5
   const weapons_burn_amount = await getBurnAmountOfWeapons(weapons);
   const whale_burn_amount = await getTotalAmountSentToAddress(whale_table_address, burn_address_dice)
   const barracuda_burn_amount = await getTotalAmountSentToAddress(barracuda_table_address, burn_address_dice)
